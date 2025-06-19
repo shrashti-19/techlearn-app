@@ -46,3 +46,16 @@ This is a basic backend setup for user authentication including **register** and
 - Implemented token-based authentication (e.g., JWT).
 - Add validation and error handling improvements.
 - Create frontend UI to connect with these APIs.
+
+## DAY-2 DELIVERABLES
+- Added Google OAuth login route (/api/auth/google) in backend.
+
+- Integrated google-auth-library to verify Google ID tokens from frontend.
+
+- Created logic to register new users via Google OAuth (without password).
+
+- Generated JWT token for users logging in with Google.
+
+- Used personal Google Cloud credentials for development; will update to company credentials when provided.
+
+- Tested signup and login APIs fully; Google login endpoint ready but pending frontend integration and testing.
