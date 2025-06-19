@@ -2,9 +2,10 @@ import express from 'express';
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
+import {OAuth2Client} from "google-auth-library";
 
 const router = express.Router();
+const client = new OAuth2Client();
 
 //jwt token generator
 const generatorToken = (id)=>{
@@ -96,6 +97,53 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('Login Error:', error);
     res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+//google oauth login 
+router.post("/google", async(req,res)=>{
+  const {token} = req.body;
+
+  try{
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const {email,name} = payload;
+
+    let user = await User.findOne({email});
+
+    if(!user){
+      //creating user without password
+
+      user = new User({
+        firstName: name.split(" ")[0],
+        lastName: name.split(" ")[1] || "",
+        email,
+        password: "",
+      });
+
+      await user.save();
+    }
+
+    const jwtToken = generatorToken(user._id);
+
+    res.status(200).json({
+      message: "Google login successful",
+      token: jwtToken,
+      user:{
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      },
+    });
+  }catch(error){
+    console.error("Google login error: ",error);
+    res.status(401).json({message: "Google authentication failed"});
+    
   }
 });
 

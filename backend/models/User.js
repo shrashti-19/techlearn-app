@@ -21,8 +21,15 @@ const userSchema = new mongoose.Schema(
         },
         password:{
             type:String,
-            required:true
+            // password required only if not google user
+            required: function(){
+                return !this.isGoogleUser;
+            },
         },
+        isGoogleUser:{
+            type: Boolean,
+            default: false
+        }
     },
     {timestamps:true}
 );
