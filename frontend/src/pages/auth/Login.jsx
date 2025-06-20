@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Login() {
@@ -15,6 +15,45 @@ export default function Login() {
   const handleSocialLogin = (provider) => {
     console.log(`Clicked ${provider} login`);
   };
+
+  // google signin component start-------------------------------------------------
+
+useEffect(() => {
+  const handleCredentialResponse = (response) => {
+    const idToken = response.credential;
+
+    fetch("http://localhost:5000/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: idToken }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          console.log("Logged in:", data);
+          // You can store the JWT token in localStorage here
+          // localStorage.setItem("token", data.token);
+        } else {
+          console.error("Login failed:", data.message);
+        }
+      });
+  };
+
+  /* global google */
+  if (window.google) {
+    google.accounts.id.initialize({
+      client_id: "YOUR_GOOGLE_CLIENT_ID", // Replace with your actual client ID
+      callback: handleCredentialResponse,
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("googleSignInDiv"),
+      { theme: "outline", size: "large" }
+    );
+  }
+}, []);
+
+  // google signin component end ----------------------------------------------------------------------
 
   return (
     <div className="flex items-center justify-center px-4 min-h-screen">
@@ -60,15 +99,14 @@ export default function Login() {
             <span className="border-t border-gray-400 w-full"></span>
           </div>
 
-          <div className="flex justify-center gap-4 mt-4">
-            <button 
-              type="button" 
-              onClick={() => handleSocialLogin('Google')}
-              className="flex items-center justify-center w-12 h-12 bg-white text-black rounded-full border hover:bg-gray-100 transition shadow-sm"
-            >
-              <img src="/public/google.png" alt="Google" className="w-6 h-6" />
-            </button>
-          </div>
+        
+<div className="flex justify-center mt-4">
+  <div className="rounded-full overflow-hidden w-12 h-12 shadow-md hover:shadow-lg transition-shadow bg-white flex items-center justify-center">
+    <div id="googleSignInDiv" className="w-10 h-10"></div>
+  </div>
+</div>
+
+
 
           <p className="text-gray-700 text-center mt-6 text-sm">
             Don't have an account?
