@@ -38,7 +38,7 @@ export default function Signup() {
 
     if (window.google) {
       window.google.accounts.id.initialize({
-        client_id: "YOUR_GOOGLE_CLIENT_ID", // replace with your actual ID
+        client_id: "292576736578-g02qvp9ss7qj3jht2ghso1aqgoil22gp.apps.googleusercontent.com", // replace with your actual ID
         callback: handleCredentialResponse,
       });
 
