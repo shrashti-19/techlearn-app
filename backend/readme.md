@@ -59,3 +59,5 @@ This is a basic backend setup for user authentication including **register** and
 - Used personal Google Cloud credentials for development; will update to company credentials when provided.
 
 - Tested signup and login APIs fully; Google login endpoint ready but pending frontend integration and testing.
+
+- Integrated Frontend with backend and also eliminated the error coming from empty Dashboard.jsx file.
