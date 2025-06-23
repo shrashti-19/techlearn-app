@@ -1,12 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Signup() {
+
+  export default function Signup() {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
+
+    const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+
+  const handleSocialLogin = (provider) => {
+  console.log(`Clicked ${provider} login`);
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,7 +33,7 @@ export default function Signup() {
     const handleCredentialResponse = (response) => {
       const idToken = response.credential;
 
-      fetch("http://localhost:5000/api/auth/google-signup", { // or same endpoint as login
+      fetch("http://localhost:5000/api/auth/register", { // or same endpoint as login
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: idToken }),
@@ -56,15 +69,29 @@ export default function Signup() {
       <div className="w-full max-w-md bg-white/60 backdrop-blur-lg rounded-xl p-8 shadow-xl z-10">
         <h2 className="text-2xl font-bold text-blue-800 mb-6 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm text-gray-700 mb-1">Name</label>
-            <input
-              type="text"
-              className="w-full px-4 py-3 bg-white rounded-lg text-gray-900 placeholder-gray-400 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="Your Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
+          <div className="grid grid-cols-2 gap-4">
+           <div>
+              <label className="block text-sm text-gray-700 mb-1">First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                className="w-full px-4 py-3 bg-white rounded-lg text-gray-900 placeholder-gray-400 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="First name"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                className="w-full px-4 py-3 bg-white rounded-lg text-gray-900 placeholder-gray-400 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Last name"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </div>
           </div>
           <div>
             <label className="block text-sm text-gray-700 mb-1">Email</label>
@@ -86,6 +113,18 @@ export default function Signup() {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
           </div>
+          <div>
+        <label className="block text-sm text-gray-700 mb-1">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              className="w-full px-4 py-3 bg-white rounded-lg text-gray-900 placeholder-gray-400 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            />
+          </div>
+
 
           <button
             type="submit"
@@ -144,7 +183,7 @@ export default function Signup() {
 //   };
 
 //   const handleSocialLogin = (provider) => {
-//     console.log(`Clicked ${provider} login`);
+//     console.log(Clicked ${provider} login);
 //   };
 
 //   return (
