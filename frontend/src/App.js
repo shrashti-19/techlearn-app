@@ -1,3 +1,4 @@
+
 import './output.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/auth/Login';
@@ -7,6 +8,12 @@ import PrivateRoute from './routes/PrivateRoute';
 import FloatingCodeWords from './FloatingCodeWords';
 import Navbar from './components/Navbar'; // Import Navbar
 import Footer from './components/Footer'; // Import Footer
+
+
+console.log("FloatingCodeWords:", typeof FloatingCodeWords);
+console.log("Navbar:", typeof Navbar);
+console.log("Footer:", typeof Footer);
+
 
 export default function App() {
   return (
