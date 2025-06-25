@@ -73,7 +73,7 @@ const Navbar = () => {
           <div className="logo">
             <Link to="/" className="logo">
               <img
-                src="./logoo.png"
+                src="{require('./assets/logoo.png')}"
                 alt="Light Logo"
                 className={`h-12 md:h-19 w-auto transition-all duration-300 ${isDarkMode ? 'hidden' : 'inline'}`}
               />
