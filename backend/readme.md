@@ -61,3 +61,31 @@ This is a basic backend setup for user authentication including **register** and
 - Tested signup and login APIs fully; Google login endpoint ready but pending frontend integration and testing.
 
 - Integrated Frontend with backend and also eliminated the error coming from empty Dashboard.jsx file.
+
+## Dashboard 
+1. XP tracking system added
+   - Created backend route /api/xp/add to add XP from Learn/Build activities.
+
+   - Connected it with UserProgress.js model.
+
+   - XP is stored as: xpFromLearn, xpFromBuild, totalXP = learn+build
+
+2. Dashboard API created
+ - New route: /api/dashboard
+
+ - Returns real-time dashboard data for the logged-in user:
+ Course Progress
+ Exercise Progress
+ Calendar Activity
+ Recent Activity
+ Enrolled Courses
+ XP Points
+
+3. JWT Token 
+- Dashboard & XP routes are protected using JWT middleware.
+
+- Only logged-in users can access their dashboard.
+
+4. Handled new users
+- If user has no progress, default empty values are returned instead of errors.
+

@@ -1,6 +1,6 @@
 import express from "express";
-import { addXP } from "../controllers/xpController";
-import { protect } from "../middleware/authMiddleware";
+import {addXP} from "../controllers/xpController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

@@ -19,7 +19,27 @@ const userProgressSchema = new mongoose.Schema({
           type: Map,
           of: String, 
           default: {},
-      }
+      },
+      courseProgress:{
+       courseTitle: { type: String },
+       progressPercent: { type: Number, default: 0 },
+       estimatedTimeRemaining: { type: String, default: "0min" }
+      },
+      exerciseProgress:{
+        totalExercises: { type: Number, default: 0 },
+        completedExercises: { type: Number, default: 0 },
+      },
+      recentActivity: {
+        course: String,
+        module: String,
+        status: [String],
+     },
+    enrolledCourses: [
+    {
+      title: String,
+      progressPercent: Number,
+    },
+],
   }, { timestamps: true });
 
   const UserProgress = mongoose.model("UserProgress", userProgressSchema);

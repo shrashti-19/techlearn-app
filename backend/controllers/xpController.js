@@ -1,8 +1,13 @@
-import UserProgress from "../models/UserProgress";
+import UserProgress from "../models/UserProgress.js";
 
 export const addXP = async(req,res)=>{
+    // console.log('req.user: ', req.user);
+    // if(!req.user){
+    //     return res.status(401).json({message: "User not authenticated"});
+    // } testing what we are getting after hitting the api endpoints
+    
     const {source, points} = req.body;
-    const userId = req.user_.id;
+    const userId = req.user.id;
 
     try{
         let progress = await UserProgress.findOne({userId});
