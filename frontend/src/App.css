@@ -36,3 +36,52 @@
     transform: rotate(360deg);
   }
 }
+
+/* Light/Dark mode gradients */
+.light-mode {
+  background: linear-gradient(to bottom right, #daf0fa, #bceaff, #bceaff);
+}
+
+.dark-mode {
+  background: linear-gradient(to bottom right, #020b23, #001233, #0a1128);
+}
+
+/* Glass panel effect */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-panel {
+  background: rgba(31, 41, 55, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Full-height layout */
+body, #root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Add to your global CSS file (index.css or tailwind.css) */
+.light-mode-bg {
+  background: linear-gradient(to bottom right, #daf0fa, #bceaff, #bceaff);
+}
+
+.dark-mode-bg {
+  background: linear-gradient(to bottom right, #020b23, #001233, #0a1128);
+}
+
+/* Remove any max-width constraints from your main content */
+.container {
+  max-width: none !important;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}

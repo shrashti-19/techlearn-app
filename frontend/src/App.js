@@ -1,83 +1,62 @@
-
-import './output.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
+import PrivateRoute from './routes/PrivateRoute';
+import FloatingCodeWords from './FloatingCodeWords';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import Dashboard from './pages/Dashboard';
-import PrivateRoute from './routes/PrivateRoute';
-import FloatingCodeWords from './FloatingCodeWords';
-import Navbar from './components/Navbar'; // Import Navbar
-import Footer from './components/Footer'; // Import Footer
 
+// Component to conditionally show floating code only on auth pages
+function FloatingCodeBackground() {
+  const location = useLocation();
+  const isAuthPage = ['/login', '/signup'].includes(location.pathname);
+  return isAuthPage ? <FloatingCodeWords /> : null;
+}
 
-console.log("FloatingCodeWords:", typeof FloatingCodeWords);
-console.log("Navbar:", typeof Navbar);
-console.log("Footer:", typeof Footer);
+// Component to conditionally show navbar
+function LayoutWrapper() {
+  const location = useLocation();
+  const showNavbar = !['/dashboard'].includes(location.pathname);
 
-
-export default function App() {
   return (
-    <Router>
-      {/* Background with floating code words - applies to all routes */}
-      <div className="relative min-h-screen bg-gradient-to-r from-blue-100 via-blue-200 to-blue-100 overflow-hidden">
-        <FloatingCodeWords />
+    <div className="relative z-10 flex flex-col min-h-screen">
+      {showNavbar && <Navbar />}
+
+      <main className="flex-grow container mx-auto px-4 py-6">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         
-        {/* Main content container with z-index to appear above background */}
-        <div className="relative z-10 flex flex-col min-h-screen">
-          {/* Navbar appears on all routes */}
-          <Navbar />
-          
-          {/* Main content area that grows to push footer down */}
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route element={<PrivateRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-              </Route>
-              <Route path="/" element={<Login />} />
-            </Routes>
-          </main>
-          
-          {/* Footer appears on all routes */}
-          <Footer />
-        </div>
-      </div>
-    </Router>
+          <Route 
+            path="/dashboard" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          <Route path="/" element={<Login />} />
+        </Routes>
+      </main>
+      
+      <Footer />
+    </div>
   );
 }
 
-
-// import './output.css';
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Login from './pages/auth/Login';
-// import Signup from './pages/auth/Signup';
-// import Dashboard from './pages/Dashboard';
-// import PrivateRoute from './routes/PrivateRoute';
-// import FloatingCodeWords from './FloatingCodeWords'; // New component
-// import Navbar from './components/Navbar'; // Import Navbar
-// import Footer from './components/Footer'; // Import Footer
-
-// export default function App() {
-//   return (
-//     <Router>
-//       {/* Background with floating code words - applies to all routes */}
-//       <div className="relative min-h-screen bg-gradient-to-r from-blue-100 via-blue-200 to-blue-100 overflow-hidden">
-//         <FloatingCodeWords />
-        
-//         {/* Routes container with z-index to appear above background */}
-//         <div className="relative z-10">
-//           <Routes>
-//             <Route path="/login" element={<Login />} />
-//             <Route path="/signup" element={<Signup />} />
-
-//               <Route element={<PrivateRoute />}></Route>
-//             <Route path="/dashboard" element={<Dashboard />} />
-//             <Route path="/" element={<Login />} />
-//           </Routes>
-//         </div>
-//       </div>
-//     </Router>
-//   );
-// }
-
+export default function App() {
+  return (
+    <ThemeProvider>
+      <Router>
+        <div className="relative min-h-screen bg-gradient-to-r from-blue-100 via-blue-200 to-blue-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 overflow-hidden">
+          <FloatingCodeBackground />
+          <LayoutWrapper />
+        </div>
+      </Router>
+    </ThemeProvider>
+  );
+}

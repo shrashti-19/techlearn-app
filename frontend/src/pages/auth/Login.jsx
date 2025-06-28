@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate(); // for redirecting after login

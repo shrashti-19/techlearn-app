@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import footerlogo from '../assets/logo-no-bg.jpg'
 
 const Footer = () => {
   return (
@@ -110,7 +111,7 @@ const Footer = () => {
       {/* Bottom Logo Section - Full width on desktop, contained on mobile */}
       <div className="absolute bottom-0 left-0 w-full pointer-events-none select-none px-4 sm:px-0">
         <img
-          src="./logo-no-bg.jpg"
+          src={footerlogo}
           alt="TechLearn Solutions"
           className="w-full max-w-full h-12 object-contain sm:h-32 md:h-56 sm:object-cover object-bottom"
           draggable="false"
