@@ -48,7 +48,8 @@ const Calendar = ({ activities }) => {
       days.push({
         day: i,
         currentMonth: true,
-        activity: activities[dateKey] || null
+        date: dateKey, // Explicitly pass the date string for backend reference
+        activity: activities ? activities[dateKey] : null // Null check for activities
       });
     }
     
@@ -65,12 +66,12 @@ const Calendar = ({ activities }) => {
     return days;
   };
 
-    const getActivityClass = (activity) => {
-    if (!activity) return '';
-    switch (activity) {
+  const getActivityClass = (activity) => {
+    if (!activity) return 'bg-red-500/80 text-white'; // Red for no activity
+    switch (activity.toLowerCase()) { // Case insensitive comparison
       case 'completed': return 'bg-emerald-500/90 text-white';
       case 'attempted': return 'bg-amber-500/80 text-white';
-      default: return 'bg-blue-900/30 text-white';
+      default: return 'bg-blue-900/30 text-white'; // Default case
     }
   };
 
@@ -119,7 +120,7 @@ const Calendar = ({ activities }) => {
             key={index}
             className={`aspect-square flex items-center justify-center rounded-lg text-sm transition-all
               ${dayObj.currentMonth ? 'text-light-text dark:text-dark-text' : 'text-light-text/40 dark:text-dark-text/40'}
-              ${dayObj.activity ? getActivityClass(dayObj.activity) : 
+              ${dayObj.activity !== undefined ? getActivityClass(dayObj.activity) : 
                 dayObj.currentMonth ? 'hover:bg-blue-900/30' : ''}
             `}
           >

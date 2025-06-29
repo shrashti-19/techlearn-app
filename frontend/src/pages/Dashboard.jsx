@@ -20,7 +20,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Mock data (same as before)
+        // Mock data
         const mockUser = { 
           firstName: 'John', 
           lastName: 'Doe',
@@ -107,15 +107,21 @@ const Dashboard = () => {
   if (!user || !progress) return null;
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'dark' : 'light'}`}>
-      <div className={`absolute inset-0 -z-10 ${theme === 'dark' ? 
+    <div className={`flex min-h-screen w-full ${theme === 'dark' ? 'dark' : 'light'}`}>
+      {/* Background gradient */}
+      <div className={`fixed inset-0 -z-10 ${theme === 'dark' ? 
         'bg-gradient-to-br from-[#020b23] via-[#001233] to-[#0a1128]' : 
-        'bg-gradient-to-br from-[#daf0fa] via-[#bceaff] to-[[#daf0fa]'}`}
+        'bg-gradient-to-br from-[#daf0fa] via-[#bceaff] to-[#daf0fa]'}`}
       />
+      
+      {/* Sidebar */}
       <Sidebar onToggle={handleSidebarToggle} />
       
-      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-56'} p-6`}>
-        <div className={`max-w-[1800px] mx-auto ${sidebarCollapsed ? 'pl-8' : ''}`}>
+      {/* Main content */}
+      <main className={`flex-1 transition-all duration-300 ${
+        sidebarCollapsed ? 'ml-[70px]' : 'ml-[280px]'
+      } p-6 overflow-auto`}>
+        <div className="max-w-[1800px] mx-auto">
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
             <UserGreeting name={`${user.firstName} ${user.lastName}`} />
             <ThemeToggle />
@@ -123,7 +129,7 @@ const Dashboard = () => {
           
           {/* Dashboard Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Course Progress */}
+            {/* Left Column */}
             <div className="lg:col-span-1">
               <ProgressDonut 
                 title="Course Progress" 
@@ -132,7 +138,7 @@ const Dashboard = () => {
               />
             </div>
             
-            {/* Middle Column - XP Points and Exercise Progress stacked */}
+            {/* Middle Column */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               <XPDisplay points={progress.xp} />
               <ProgressBar 
@@ -142,12 +148,12 @@ const Dashboard = () => {
               />
             </div>
             
-            {/* Right Column - Calendar */}
+            {/* Right Column */}
             <div className="lg:col-span-1">
               <Calendar activities={progress.calendar} />
             </div>
             
-            {/* Exercises Section - Full width below */}
+            {/* Full width section */}
             <div className="col-span-full mt-6">
               <RecentExercises exercises={progress.recentExercises} />
             </div>
