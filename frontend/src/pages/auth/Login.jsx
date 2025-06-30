@@ -1,73 +1,55 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext'; // Make sure this path is correct
+import { useTheme } from '../../context/ThemeContext';
+import { login, googleLogin } from '../../api/authService';
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const { theme } = useTheme(); // Get the current theme
+  const { theme } = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        console.log("Logged in:", data);
-        navigate("/dashboard"); // replace with your post-login page
-      } else {
-        setError(data.message || "Login failed");
-      }
+      const { data } = await login(formData);
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
     } catch (err) {
-      console.error(err);
-      setError("Something went wrong");
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
-  const handleGoogleResponse = (response) => {
-    const idToken = response.credential;
-
-    fetch("http://localhost:5000/api/auth/google", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: idToken }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          console.log("Google login success:", data);
-          navigate("/dashboard");
-        } else {
-          setError(data.message || "Google login failed");
-        }
-      })
-      .catch(() => setError("Google login failed"));
+  const handleGoogleResponse = async (response) => {
+    try {
+      const { data } = await googleLogin(response.credential);
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Google login failed");
+    }
   };
 
   useEffect(() => {
     /* global google */
     if (window.google) {
       google.accounts.id.initialize({
-        client_id: "743910209791-un9r73br1mc3e766t3gq2ga4tiqudfth.apps.googleusercontent.com",
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
         callback: handleGoogleResponse,
       });
 
       google.accounts.id.renderButton(
         document.getElementById("googleSignInDiv"),
-        { theme: "outline", size: "large" }
+        { 
+          theme: theme === 'dark' ? 'filled_black' : 'outline', 
+          size: 'large',
+          width: '300'
+        }
       );
     }
-  }, []);
+  }, [theme]);
 
   return (
     <div className="flex items-center justify-center px-4 min-h-screen">

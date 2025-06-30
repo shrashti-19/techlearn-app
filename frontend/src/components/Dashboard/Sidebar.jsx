@@ -2,7 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight, FiCheckCircle, FiX, FiMenu } from 'react-icons/fi';
-import logoo from '../../assets/logoo.png'
+import logoo from '../../assets/logoo.png';
+import logoo2 from '../../assets/logoo2.png'; // Import the dark mode logo
 
 const Sidebar = ({ onToggle }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -28,33 +29,30 @@ const Sidebar = ({ onToggle }) => {
       <motion.div
         initial={false}
         animate={{
-          width: sidebarCollapsed ? "120px" : "320px", // This controls the width of the sidebar in open/closed states
+          width: sidebarCollapsed ? "90px" : "280px",
           transition: { duration: 0.3, ease: "easeInOut" }
         }}
         className="hidden lg:flex flex-col bg-white/20 dark:bg-gray-900/40 backdrop-blur-xl border-r border-white/20 dark:border-gray-700/20 relative z-40"
       >
-        {/* Sidebar Header */}
-        <div className="p-4 border-b border-white/10 dark:border-gray-700/20 pt-24 relative z-50"> {/* This padding (p-4) controls the header padding */}
-          <div className="flex items-center justify-between relative z-50">
-            {/* Logo */}
-            <AnimatePresence mode="wait">
-              {!sidebarCollapsed && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center"
-                >
-                  <img 
-      src={logoo} // Update this path
-      alt="Logo"
-      className="h-8 w-auto" // Adjust height as needed
-    />
-                </motion.div>
-              )}
-            </AnimatePresence>
+        {/* Static Logo positioned at the top - switches with dark mode */}
+        <div className="absolute top-4 left-0 right-0 flex justify-center z-50">
+          {/* Light mode logo */}
+          <img 
+            src={logoo}
+            alt="Logo"
+            className="h-20 w-auto transition-all duration-300 dark:hidden" // Only shows in light mode
+          />
+          {/* Dark mode logo */}
+          <img 
+            src={logoo2}
+            alt="Logo"
+            className="h-20 w-auto transition-all duration-300 hidden dark:block" // Only shows in dark mode
+          />
+        </div>
 
+        {/* Rest of the sidebar code remains the same */}
+        <div className="p-4 border-b border-white/10 dark:border-gray-700/20 pt-32 relative z-50">
+          <div className="flex items-center justify-end relative z-50">
             <button
               type="button"
               onClick={handleToggleSidebar}
@@ -66,32 +64,31 @@ const Sidebar = ({ onToggle }) => {
               aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {sidebarCollapsed ? (
-                <FiChevronRight className="w-5 h-5 text-blue-700 dark:text-blue-300" />
+                <FiChevronRight className="w-3 h-3 text-blue-700 dark:text-blue-300" />
               ) : (
-                <FiChevronLeft className="w-5 h-5 text-blue-700 dark:text-blue-300" />
+                <FiChevronLeft className="w-3 h-3 text-blue-700 dark:text-blue-300" />
               )}
             </button>
           </div>
         </div>
 
         {/* Sidebar Content */}
-        <div className="flex-1 overflow-y-auto p-4"> {/* This padding (p-4) controls the content area padding */}
-          <div className="space-y-3"> {/* This space-y-3 controls the vertical spacing between menu items */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="space-y-3">
             {menuItems.map((item, index) => (
               <motion.button
-  key={item.id}
-  onClick={() => {
-    // Handle navigation if needed
-  }}
-  whileHover={{ scale: sidebarCollapsed ? 1.05 : 1.02 }}
-  whileTap={{ scale: 0.98 }}
-  className={`group relative w-full text-left rounded-xl transition-all duration-300 ${
-    item.completed
-      ? 'bg-green-500/20 border-2 border-green-500/50 text-green-700 dark:text-green-300 shadow-lg'
-      : 'bg-white/40 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-600/50 hover:bg-white/60 dark:hover:bg-gray-700/50 hover:shadow-md'
-  } ${sidebarCollapsed ? 'p-3 mx-1' : 'p-4'}`} 
-  // This controls menu item padding in open/closed states
->
+                key={item.id}
+                onClick={() => {
+                  // Handle navigation if needed
+                }}
+                whileHover={{ scale: sidebarCollapsed ? 1.05 : 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`group relative w-full text-left rounded-xl transition-all duration-300 ${
+                  item.completed
+                    ? 'bg-green-500/20 border-2 border-green-500/50 text-green-700 dark:text-green-300 shadow-lg'
+                    : 'bg-white/40 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-600/50 hover:bg-white/60 dark:hover:bg-gray-700/50 hover:shadow-md'
+                } ${sidebarCollapsed ? 'p-3 mx-1' : 'p-4'}`}
+              >
                 <NavLink
                   to={`/${item.id}`}
                   className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}
@@ -169,21 +166,31 @@ const Sidebar = ({ onToggle }) => {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="lg:hidden fixed left-0 top-0 bottom-0 w-80 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-r border-white/20 dark:border-gray-700/20 z-50"
             >
-              {/* Mobile Header */}
-              <div className="p-4 border-b border-white/10 dark:border-gray-700/20 pt-24">
-                <div className="flex items-center justify-between">
-                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">
-                    L
-                  </div>
-                  <button
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="p-2 rounded-lg bg-white/50 dark:bg-gray-800/50 hover:bg-white/70 dark:hover:bg-gray-700/50 transition-all duration-200"
-                  >
-                    <FiX className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  </button>
-                </div>
-              </div>
-
+              {/* Mobile Header - Updated to properly show theme-switching logo */}
+<div className="p-4 border-b border-white/10 dark:border-gray-700/20 pt-6"> {/* Reduced pt to bring logo higher */}
+  <div className="flex items-center justify-between">
+    <div className="flex items-center">
+      {/* Light mode logo */}
+      <img 
+        src={logoo}
+        alt="Logo"
+        className="h-16 w-auto dark:hidden" // Reduced size to h-16 for mobile
+      />
+      {/* Dark mode logo */}
+      <img 
+        src={logoo2}
+        alt="Logo"
+        className="h-16 w-auto hidden dark:block" // Reduced size to h-16 for mobile
+      />
+    </div>
+    <button
+      onClick={() => setMobileMenuOpen(false)}
+      className="p-2 rounded-lg bg-white/50 dark:bg-gray-800/50 hover:bg-white/70 dark:hover:bg-gray-700/50 transition-all duration-200"
+    >
+      <FiX className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+    </button>
+  </div>
+</div>
               {/* Mobile Content */}
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-3">

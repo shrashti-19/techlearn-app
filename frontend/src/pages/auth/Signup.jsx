@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
+import { register, googleLogin } from '../../api/authService'; // Add these imports
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -19,64 +20,84 @@ export default function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Updated form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const { data } = await register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        navigate("/dashboard");
-      } else {
-        setError(data.message || "Signup failed");
-      }
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
     } catch (err) {
-      console.error("Signup error:", err);
-      setError("Something went wrong");
+      setError(err.response?.data?.message || "Signup failed");
+    }
+  };
+
+  // Updated Google Sign-In
+  const handleGoogleResponse = async (response) => {
+    try {
+      const { data } = await googleLogin(response.credential);
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Google sign-up failed");
     }
   };
 
   useEffect(() => {
-    const handleCredentialResponse = (response) => {
-      const idToken = response.credential;
+    const loadGoogleScript = () => {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
 
-      fetch("http://localhost:5000/api/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: idToken }),
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.token) {
-            localStorage.setItem("token", data.token);
-            navigate("/dashboard");
-          } else {
-            setError(data.message || "Google sign-up failed");
-          }
-        })
-        .catch(() => setError("Google sign-up failed"));
+      script.onload = () => {
+        if (window.google) {
+          window.google.accounts.id.initialize({
+            client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+            callback: handleGoogleResponse,
+          });
+
+          window.google.accounts.id.renderButton(
+            document.getElementById("googleSignupDiv"),
+            { 
+              theme: theme === 'dark' ? 'filled_black' : 'outline', 
+              size: "large",
+              width: '300'
+            }
+          );
+        }
+      };
     };
 
-    if (window.google) {
-      window.google.accounts.id.initialize({
-        client_id: "743910209791-un9r73br1mc3e766t3gq2ga4tiqudfth.apps.googleusercontent.com",
-        callback: handleCredentialResponse,
-      });
-
+    if (!window.google) {
+      loadGoogleScript();
+    } else {
+      // Re-render if theme changes
       window.google.accounts.id.renderButton(
         document.getElementById("googleSignupDiv"),
-        { theme: theme === 'dark' ? 'filled_black' : 'outline', size: "large" }
+        { 
+          theme: theme === 'dark' ? 'filled_black' : 'outline', 
+          size: "large",
+          width: '300'
+        }
       );
     }
   }, [theme]);
+
 
   return (
     <div className="flex items-center justify-center px-4 min-h-screen">

@@ -8,6 +8,7 @@ import XPDisplay from '../components/Dashboard/XPDisplay';
 import RecentExercises from '../components/Dashboard/RecentExercises';
 import ThemeToggle from '../components/Dashboard/ThemeToggle';
 import ProgressBar from '../components/Dashboard/ProgressBar';
+import { fetchDashboardData } from '../api/dashboardService';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -17,72 +18,45 @@ const Dashboard = () => {
   const { theme } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Mock data
-        const mockUser = { 
-          firstName: 'John', 
-          lastName: 'Doe',
-          email: 'john.doe@example.com'
-        };
-        
-        const mockProgress = {
-          course: { 
-            title: 'Introduction to HTML', 
-            progressPercent: 75 
-          },
-          exercise: { 
-            completed: 3, 
-            total: 4 
-          },
-          xp: 84,
-          calendar: {
-            '2025-06-27': 'completed',
-            '2025-06-26': 'attempted',
-            '2025-06-25': 'inactive'
-          },
-          recentExercises: [
-            { 
-              title: 'JavaScript Basics', 
-              description: 'Practice coding exercises and improve your skills',
-              count: 10, 
-              xp: 100, 
-              free: true 
-            },
-            { 
-              title: 'CSS Layouts', 
-              description: 'Master flexbox and grid layouts',
-              count: 8, 
-              xp: 80, 
-              free: true 
-            },
-            { 
-              title: 'React Hooks', 
-              description: 'Learn useState and useEffect',
-              count: 5, 
-              xp: 120, 
-              free: false 
-            }
-          ]
-        };
-
-        setUser(mockUser);
-        setProgress(mockProgress);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-        console.error('Failed to load dashboard data:', err);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+  // Add this function definition
   const handleSidebarToggle = (collapsed) => {
     setSidebarCollapsed(collapsed);
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const { data } = await fetchDashboardData();
+        
+        setUser({
+          firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          email: data.user.email
+        });
+        
+        setProgress({
+          course: {
+            title: data.courseProgress?.courseTitle || 'No active course',
+            progressPercent: data.courseProgress?.progressPercent || 0
+          },
+          exercise: {
+            completed: data.exerciseProgress?.completedExercises || 0,
+            total: data.exerciseProgress?.totalExercises || 0
+          },
+          xp: data.xpPoints?.totalXP || 0,
+          calendar: data.calendarActivity || {},
+          recentExercises: data.recentExercises || []
+        });
+        
+        setLoading(false);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load dashboard");
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   if (loading) {
     return (
@@ -119,7 +93,7 @@ const Dashboard = () => {
       
       {/* Main content */}
       <main className={`flex-1 transition-all duration-300 ${
-        sidebarCollapsed ? 'ml-[70px]' : 'ml-[280px]'
+        sidebarCollapsed ? 'ml-[10px]' : 'ml-[10px]'
       } p-6 overflow-auto`}>
         <div className="max-w-[1800px] mx-auto">
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">

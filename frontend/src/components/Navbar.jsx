@@ -111,15 +111,18 @@ const Navbar = () => {
             </Link>
 
             {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-full transition-colors duration-300 ${
-                theme === 'dark' ? 'hover:bg-gray-700 text-yellow-300' : 'hover:bg-gray-100 text-gray-700'
-              }`}
-              aria-label="Toggle theme"
-            >
-              <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
-            </button>
+<button
+  onClick={toggleTheme}
+  className={`p-2 rounded-full transition-colors duration-300 ${
+    theme === 'dark' ? 'hover:bg-gray-700 text-white' : 'hover:bg-gray-100 text-gray-700'
+  }`}
+  aria-label="Toggle theme"
+>
+  <FontAwesomeIcon 
+    icon={theme === 'light' ? faMoon : faSun} 
+    className={theme === 'dark' ? 'text-white-300' : 'text-gray-700'} 
+  />
+</button>
           </nav>
 
           {/* Mobile Menu Toggle */}
@@ -165,16 +168,20 @@ const Navbar = () => {
           ))}
 
           {/* Theme Toggle - Mobile */}
-          <button
-            onClick={toggleTheme}
-            className={`text-left py-2.5 text-[14px] transition-colors duration-300 ${
-              theme === 'dark' ? 'text-[#e0e6f5] hover:text-white' : 'text-black hover:text-[#333]'
-            }`}
-            aria-label="Toggle theme"
-          >
-            <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} className="mr-2" />
-            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-          </button>
+
+<button
+  onClick={toggleTheme}
+  className={`text-left py-2.5 text-[14px] transition-colors duration-300 ${
+    theme === 'dark' ? 'text-white hover:text-yellow-300' : 'text-gray-700 hover:text-gray-900'
+  }`}
+  aria-label="Toggle theme"
+>
+  <FontAwesomeIcon 
+    icon={theme === 'light' ? faMoon : faSun} 
+    className={`mr-2 ${theme === 'dark' ? 'text-yellow-300' : 'text-gray-700'}`} 
+  />
+  {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+</button>
         </nav>
       </header>
     </>
