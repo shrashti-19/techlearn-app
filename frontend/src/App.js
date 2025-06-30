@@ -30,15 +30,15 @@ function LayoutWrapper() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          {/* <Route 
+          <Route 
             path="/dashboard" 
             element={
               <PrivateRoute>
                 <Dashboard />
               </PrivateRoute>
             } 
-          /> */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/" element={<Login />} />
         </Routes>
       </main>
