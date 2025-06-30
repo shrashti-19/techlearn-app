@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { login, googleLogin } from '../../api/authService';
-
+import { useCallback } from 'react';
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Login() {
     }
   };
 
-  const handleGoogleResponse = async (response) => {
+  const handleGoogleResponse = useCallback(async (response) => {
     try {
       const { data } = await googleLogin(response.credential);
       localStorage.setItem("token", data.token);
@@ -30,7 +30,7 @@ export default function Login() {
     } catch (err) {
       setError(err.response?.data?.message || "Google login failed");
     }
-  };
+  },[navigate]);
 
   useEffect(() => {
     /* global google */
@@ -49,7 +49,7 @@ export default function Login() {
         }
       );
     }
-  }, [theme]);
+  }, [theme,handleGoogleResponse]);
 
   return (
     <div className="flex items-center justify-center px-4 min-h-screen">

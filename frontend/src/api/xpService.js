@@ -7,6 +7,6 @@ export const fetchXP = async () => {
 };
 
 export const addXP = async (amount) => {
-  const response = await api.post('/xp/add', { amount });
+  const response = await api.post('/api/add', { amount });
   return response.data;
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { register, googleLogin } from '../../api/authService'; // Add these imports
-
+import { useCallback } from 'react';
 export default function Signup() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -46,7 +46,7 @@ export default function Signup() {
   };
 
   // Updated Google Sign-In
-  const handleGoogleResponse = async (response) => {
+  const handleGoogleResponse = useCallback(async (response) => {
     try {
       const { data } = await googleLogin(response.credential);
       localStorage.setItem("token", data.token);
@@ -54,7 +54,7 @@ export default function Signup() {
     } catch (err) {
       setError(err.response?.data?.message || "Google sign-up failed");
     }
-  };
+  },[navigate]);
 
   useEffect(() => {
     const loadGoogleScript = () => {
@@ -96,7 +96,7 @@ export default function Signup() {
         }
       );
     }
-  }, [theme]);
+  }, [theme, handleGoogleResponse]);
 
 
   return (
