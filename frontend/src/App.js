@@ -1,8 +1,7 @@
-import './App.css';
+// App.js (final version)
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
-import { UserProvider } from './context/UserContext'; // Add this import
-//import PrivateRoute from './routes/PrivateRoute';
+import { UserProvider } from './context/UserContext';
 import FloatingCodeWords from './FloatingCodeWords';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -11,6 +10,8 @@ import Signup from './pages/auth/Signup';
 import Dashboard from './pages/Dashboard';
 import './lib/fontawesome';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import './App.css';
+import PrivateRoute from './routes/PrivateRoute';
 
 function FloatingCodeBackground() {
   const location = useLocation();
@@ -30,15 +31,15 @@ function LayoutWrapper() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          {/* <Route 
+          <Route 
             path="/dashboard" 
             element={
               <PrivateRoute>
                 <Dashboard />
               </PrivateRoute>
             } 
-          /> */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/" element={<Login />} />
         </Routes>
       </main>
@@ -51,7 +52,7 @@ function LayoutWrapper() {
 export default function App() {
   return (
     <ThemeProvider>
-      <UserProvider> {/* Wrap with UserProvider */}
+      <UserProvider>
         <Router>
           <div className="relative min-h-screen overflow-hidden">
             <FloatingCodeBackground />
@@ -62,3 +63,16 @@ export default function App() {
     </ThemeProvider>
   );
 }
+
+
+
+
+
+{/* <Route 
+            path="/dashboard" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          /> */}

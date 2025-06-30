@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext'; // Added to use centralized user data
 import Sidebar from '../components/Dashboard/Sidebar';
 import UserGreeting from '../components/Dashboard/UserGreeting';
 import ProgressDonut from '../components/Dashboard/ProgressDonut';
@@ -8,57 +9,42 @@ import XPDisplay from '../components/Dashboard/XPDisplay';
 import RecentExercises from '../components/Dashboard/RecentExercises';
 import ThemeToggle from '../components/Dashboard/ThemeToggle';
 import ProgressBar from '../components/Dashboard/ProgressBar';
-import { fetchDashboardData } from '../api/dashboardService';
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { theme } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Using centralized user context instead of local state
+  const { 
+    user, 
+    isLoading, 
+    error, 
+    xp, 
+    recentExercises, 
+    progress: contextProgress,
+    activities 
+  } = useUser();
 
-  // Add this function definition
+  // Transform context data to match your existing component props
+  const progress = contextProgress ? {
+    course: {
+      title: 'Current Course', // Default title
+      progressPercent: contextProgress.courseProgress || 0
+    },
+    exercise: {
+      completed: recentExercises?.filter(ex => ex.completed)?.length || 0,
+      total: recentExercises?.length || 0
+    },
+    xp: xp || 0,
+    calendar: activities || {},
+    recentExercises: recentExercises || []
+  } : null;
+
   const handleSidebarToggle = (collapsed) => {
     setSidebarCollapsed(collapsed);
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const { data } = await fetchDashboardData();
-        
-        setUser({
-          firstName: data.user.firstName,
-          lastName: data.user.lastName,
-          email: data.user.email
-        });
-        
-        setProgress({
-          course: {
-            title: data.courseProgress?.courseTitle || 'No active course',
-            progressPercent: data.courseProgress?.progressPercent || 0
-          },
-          exercise: {
-            completed: data.exerciseProgress?.completedExercises || 0,
-            total: data.exerciseProgress?.totalExercises || 0
-          },
-          xp: data.xpPoints?.totalXP || 0,
-          calendar: data.calendarActivity || {},
-          recentExercises: data.recentExercises || []
-        });
-        
-        setLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.message || "Failed to load dashboard");
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-white dark:bg-gray-900">
         <div className="text-xl animate-pulse text-gray-800 dark:text-gray-200">
@@ -82,16 +68,16 @@ const Dashboard = () => {
 
   return (
     <div className={`flex min-h-screen w-full ${theme === 'dark' ? 'dark' : 'light'}`}>
-      {/* Background gradient */}
+      {/* Background gradient - unchanged */}
       <div className={`fixed inset-0 -z-10 ${theme === 'dark' ? 
         'bg-gradient-to-br from-[#020b23] via-[#001233] to-[#0a1128]' : 
         'bg-gradient-to-br from-[#daf0fa] via-[#bceaff] to-[#daf0fa]'}`}
       />
       
-      {/* Sidebar */}
+      {/* Sidebar - unchanged */}
       <Sidebar onToggle={handleSidebarToggle} />
       
-      {/* Main content */}
+      {/* Main content - structure unchanged */}
       <main className={`flex-1 transition-all duration-300 ${
         sidebarCollapsed ? 'ml-[10px]' : 'ml-[10px]'
       } p-6 overflow-auto`}>
@@ -101,9 +87,8 @@ const Dashboard = () => {
             <ThemeToggle />
           </header>
           
-          {/* Dashboard Grid */}
+          {/* Dashboard Grid - unchanged */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column */}
             <div className="lg:col-span-1">
               <ProgressDonut 
                 title="Course Progress" 
@@ -112,22 +97,19 @@ const Dashboard = () => {
               />
             </div>
             
-            {/* Middle Column */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               <XPDisplay points={progress.xp} />
               <ProgressBar 
                 title="Exercise Progress" 
-                progress={Math.round((progress.exercise.completed / progress.exercise.total) * 100)}
+                progress={Math.round((progress.exercise.completed / (progress.exercise.total || 1)) * 100)}
                 subtitle={`${progress.exercise.completed}/${progress.exercise.total}`}
               />
             </div>
             
-            {/* Right Column */}
             <div className="lg:col-span-1">
               <Calendar activities={progress.calendar} />
             </div>
             
-            {/* Full width section */}
             <div className="col-span-full mt-6">
               <RecentExercises exercises={progress.recentExercises} />
             </div>
