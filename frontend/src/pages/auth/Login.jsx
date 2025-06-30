@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { useTheme } from '../../context/ThemeContext'; // Make sure this path is correct
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const navigate = useNavigate(); // for redirecting after login
+  const navigate = useNavigate();
   const [error, setError] = useState("");
+  const { theme } = useTheme(); // Get the current theme
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +58,7 @@ export default function Login() {
     /* global google */
     if (window.google) {
       google.accounts.id.initialize({
-        client_id: "292576736578-g02qvp9ss7qj3jht2ghso1aqgoil22gp.apps.googleusercontent.com",
+        client_id: "743910209791-un9r73br1mc3e766t3gq2ga4tiqudfth.apps.googleusercontent.com",
         callback: handleGoogleResponse,
       });
 
@@ -70,59 +71,86 @@ export default function Login() {
 
   return (
     <div className="flex items-center justify-center px-4 min-h-screen">
-      <div className="w-full max-w-md bg-white/60 backdrop-blur-lg rounded-xl p-8 shadow-xl z-10">
-        <h2 className="text-2xl font-bold text-blue-800 mb-6 text-center">Login</h2>
+      {/* Only add dark mode classes to the login box itself */}
+      <div className={`w-full max-w-md backdrop-blur-lg rounded-xl p-8 shadow-xl z-10 
+                      ${theme === 'dark' ? 
+                        'bg-gray-800/80 text-gray-100 border-gray-700' : 
+                        'bg-white/60 text-gray-900 border-gray-300'}`}>
 
-        {error && <p className="text-red-600 text-sm text-center mb-4">{error}</p>}
+        <h2 className={`text-2xl font-bold mb-6 text-center ${theme === 'dark' ? 'text-blue-400' : 'text-blue-800'}`}>
+          Login
+        </h2>
+
+        {error && <p className={`text-sm text-center mb-4 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
+          {error}
+        </p>}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm text-gray-700 mb-1">Email</label>
+            <label className={`block text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+              Email
+            </label>
             <input
               type="email"
-              className="w-full px-4 py-3 bg-white rounded-lg text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 
+                        ${theme === 'dark' ? 
+                          'bg-gray-700 text-white border-gray-600' : 
+                          'bg-white text-gray-900 border-gray-300'}`}
               placeholder="username@gmail.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
           </div>
+          
+          {/* Password field with same theming */}
           <div>
-            <label className="block text-sm text-gray-700 mb-1">Password</label>
+            <label className={`block text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+              Password
+            </label>
             <input
               type="password"
-              className="w-full px-4 py-3 bg-white rounded-lg text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 
+                        ${theme === 'dark' ? 
+                          'bg-gray-700 text-white border-gray-600' : 
+                          'bg-white text-gray-900 border-gray-300'}`}
               placeholder="Password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
           </div>
-          <div className="text-center text-sm text-blue-600 hover:underline cursor-pointer">
+
+          <div className={`text-center text-sm cursor-pointer ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'} hover:underline`}>
             Forgot Password?
           </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+            className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors
+                      ${theme === 'dark' ? 
+                        'bg-blue-600 hover:bg-blue-500 text-white' : 
+                        'bg-blue-800 hover:bg-blue-700 text-white'}`}
           >
             Sign in
           </button>
 
-          <div className="flex items-center justify-center my-4 text-gray-500">
-            <span className="border-t border-gray-400 w-full"></span>
+          <div className={`flex items-center justify-center my-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+            <span className={`border-t w-full ${theme === 'dark' ? 'border-gray-600' : 'border-gray-400'}`}></span>
             <span className="px-1 text-sm">or</span>
             <span className="px-1 text-sm">continue</span>
             <span className="px-1 text-sm">with</span>
-            <span className="border-t border-gray-400 w-full"></span>
+            <span className={`border-t w-full ${theme === 'dark' ? 'border-gray-600' : 'border-gray-400'}`}></span>
           </div>
 
           <div className="flex justify-center mt-4">
-            <div className="rounded-full overflow-hidden w-12 h-12 shadow-md hover:shadow-lg transition-shadow bg-white flex items-center justify-center">
+            <div className={`rounded-full overflow-hidden w-10 h-10 shadow-md hover:shadow-lg transition-shadow flex items-center justify-center 
+                           ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
               <div id="googleSignInDiv" className="w-10 h-10"></div>
             </div>
           </div>
 
-          <p className="text-gray-700 text-center mt-6 text-sm">
-            Don't have an account?
-            <Link to="/signup" className="text-blue-600 hover:underline ml-1 font-medium">
+          <p className={`text-center mt-6 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            Don't have an account?{' '}
+            <Link to="/signup" className={`font-medium hover:underline ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
               Sign up for free
             </Link>
           </p>

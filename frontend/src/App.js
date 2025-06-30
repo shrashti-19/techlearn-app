@@ -1,6 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { UserProvider } from './context/UserContext'; // Add this import
 import PrivateRoute from './routes/PrivateRoute';
 import FloatingCodeWords from './FloatingCodeWords';
 import Navbar from './components/Navbar';
@@ -50,12 +51,14 @@ function LayoutWrapper() {
 export default function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <div className="relative min-h-screen overflow-hidden">
-          <FloatingCodeBackground />
-          <LayoutWrapper />
-        </div>
-      </Router>
+      <UserProvider> {/* Wrap with UserProvider */}
+        <Router>
+          <div className="relative min-h-screen overflow-hidden">
+            <FloatingCodeBackground />
+            <LayoutWrapper />
+          </div>
+        </Router>
+      </UserProvider>
     </ThemeProvider>
   );
 }
