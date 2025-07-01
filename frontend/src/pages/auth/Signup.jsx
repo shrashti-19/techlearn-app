@@ -35,7 +35,8 @@ export default function Signup() {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        confirmPassword: formData.confirmPassword
       });
 
       localStorage.setItem("token", data.token);
