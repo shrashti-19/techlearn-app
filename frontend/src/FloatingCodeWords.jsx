@@ -40,7 +40,7 @@ const FloatingCodeWords = () => {
         </span>
       ))}
 
-      <style jsx>{`
+      <style>{`
         @keyframes fall {
           0% {
             transform: translateY(-100px);
