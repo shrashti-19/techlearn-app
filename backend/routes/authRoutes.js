@@ -3,6 +3,8 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {OAuth2Client} from "google-auth-library";
+import {protect} from "../middleware/authMiddleware.js";
+
 
 const router = express.Router();
 const client = new OAuth2Client();
@@ -146,5 +148,25 @@ router.post("/google", async(req,res)=>{
     
   }
 });
+
+//currently logged in user's data
+router.get('/me', protect, async(req,res)=>{
+  try{
+    if(!req.user){
+      return res.status(401).json({message: 'Not authorized'});
+    }
+
+    res.status(200).json({
+      id: req.user._id,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      email: req.user.email,
+    });
+  }catch(error){
+    console.error('Fetch user error:' , error);
+    res.status(500).json({message: "Server error"});
+    
+  }
+})
 
 export default router;
