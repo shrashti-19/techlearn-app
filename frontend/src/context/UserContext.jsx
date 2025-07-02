@@ -1,6 +1,7 @@
 // UserContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { getCurrentUser } from '../api/authService';
 
 const UserContext = createContext();
 
@@ -27,51 +28,73 @@ export const UserProvider = ({ children }) => {
 
   // Fetch user data
   const fetchUserData = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
+    // try {
+    //   setIsLoading(true);
+    //   setError(null);
       
-      // Using mock data since backend isn't available
-      const mockData = {
-        user: {
-          firstName: "John",
-          lastName: "Doe",
-          email: "john@example.com"
-        },
-        xpPoints: {
-          totalXP: 1250
-        },
-        recentExercises: [
-          { id: 1, name: "React Basics", completed: true },
-          { id: 2, name: "State Management", completed: false }
-        ],
-        courseProgress: {
-          progressPercent: 65
-        },
-        calendarActivity: {
-          "2023-11-01": "completed",
-          "2023-11-02": "missed"
-        }
-      };
+    //   // Using mock data since backend isn't available
+    //   const mockData = {
+    //     user: {
+    //       firstName: "John",
+    //       lastName: "Doe",
+    //       email: "john@example.com"
+    //     },
+    //     xpPoints: {
+    //       totalXP: 1250
+    //     },
+    //     recentExercises: [
+    //       { id: 1, name: "React Basics", completed: true },
+    //       { id: 2, name: "State Management", completed: false }
+    //     ],
+    //     courseProgress: {
+    //       progressPercent: 65
+    //     },
+    //     calendarActivity: {
+    //       "2023-11-01": "completed",
+    //       "2023-11-02": "missed"
+    //     }
+    //   };
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+    //   // Simulate API delay
+    //   await new Promise(resolve => setTimeout(resolve, 800));
 
-      setUser(mockData.user);
-      setXp(mockData.xpPoints.totalXP);
-      setRecentExercises(mockData.recentExercises);
-      setProgress({
-        courseProgress: mockData.courseProgress.progressPercent,
-        goalsProgress: 40 // Default value
-      });
-      setActivities(mockData.calendarActivity);
+    //   setUser(mockData.user);
+    //   setXp(mockData.xpPoints.totalXP);
+    //   setRecentExercises(mockData.recentExercises);
+    //   setProgress({
+    //     courseProgress: mockData.courseProgress.progressPercent,
+    //     goalsProgress: 40 // Default value
+    //   });
+    //   setActivities(mockData.calendarActivity);
 
-    } catch (err) {
-      setError(err.message || "Failed to load user data");
-      console.error("Error fetching user data:", err);
-    } finally {
-      setIsLoading(false);
-    }
+    // } catch (err) {
+    //   setError(err.message || "Failed to load user data");
+    //   console.error("Error fetching user data:", err);
+    // } finally {
+    //   setIsLoading(false);
+    // }
+     try {
+    setIsLoading(true);
+    setError(null);
+
+    // Make actual API call to backend to get user info
+    const { data } = await getCurrentUser();
+
+    // Set user data from backend response
+    setUser(data);
+
+    // You can adjust or reset other states as needed
+    setXp(0);
+    setRecentExercises([]);
+    setProgress({ courseProgress: 0, goalsProgress: 0 });
+    setActivities({});
+
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to load user data");
+    console.error("Error fetching user data:", err);
+  } finally {
+    setIsLoading(false);
+  }
   };
 
   useEffect(() => {
