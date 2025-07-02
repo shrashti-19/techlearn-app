@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { register, googleLogin } from '../../api/authService'; // Add these imports
-import { useCallback } from 'react';
+import { register, googleLogin } from '../../api/authService';
+
 export default function Signup() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -20,7 +20,6 @@ export default function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Updated form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -46,7 +45,6 @@ export default function Signup() {
     }
   };
 
-  // Updated Google Sign-In
   const handleGoogleResponse = useCallback(async (response) => {
     try {
       const { data } = await googleLogin(response.credential);
@@ -55,7 +53,7 @@ export default function Signup() {
     } catch (err) {
       setError(err.response?.data?.message || "Google sign-up failed");
     }
-  },[navigate]);
+  }, [navigate]);
 
   useEffect(() => {
     const loadGoogleScript = () => {
@@ -77,7 +75,7 @@ export default function Signup() {
             { 
               theme: theme === 'dark' ? 'filled_black' : 'outline', 
               size: "large",
-              width: '300'
+              width: '250'
             }
           );
         }
@@ -87,44 +85,42 @@ export default function Signup() {
     if (!window.google) {
       loadGoogleScript();
     } else {
-      // Re-render if theme changes
       window.google.accounts.id.renderButton(
         document.getElementById("googleSignupDiv"),
         { 
           theme: theme === 'dark' ? 'filled_black' : 'outline', 
           size: "large",
-          width: '300'
+          width: '250'
         }
       );
     }
   }, [theme, handleGoogleResponse]);
 
-
   return (
     <div className="flex items-center justify-center px-4 min-h-screen">
-      <div className={`w-full max-w-md backdrop-blur-lg rounded-xl p-8 shadow-xl z-10 border
+      <div className={`w-full max-w-sm backdrop-blur-lg rounded-xl p-6 shadow-xl z-10 border
                       ${theme === 'dark' ? 
                         'bg-gray-800/80 text-gray-100 border-gray-700' : 
                         'bg-white/60 text-gray-900 border-gray-300'}`}>
 
-        <h2 className={`text-2xl font-bold mb-6 text-center ${theme === 'dark' ? 'text-blue-400' : 'text-blue-800'}`}>
+        <h2 className={`text-xl font-bold mb-4 text-center ${theme === 'dark' ? 'text-blue-400' : 'text-blue-800'}`}>
           Sign Up
         </h2>
 
-        {error && <p className={`text-sm text-center mb-4 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
+        {error && <p className={`text-sm text-center mb-3 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
           {error}
         </p>}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={`block text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label className={`block text-xs mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 First Name
               </label>
               <input
                 type="text"
                 name="firstName"
-                className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 
+                className={`w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 
                             ${theme === 'dark' ? 
                               'bg-gray-700 text-white border-gray-600' : 
                               'bg-white text-gray-900 border-gray-300'}`}
@@ -134,13 +130,13 @@ export default function Signup() {
               />
             </div>
             <div>
-              <label className={`block text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label className={`block text-xs mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 Last Name
               </label>
               <input
                 type="text"
                 name="lastName"
-                className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 
+                className={`w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 
                             ${theme === 'dark' ? 
                               'bg-gray-700 text-white border-gray-600' : 
                               'bg-white text-gray-900 border-gray-300'}`}
@@ -152,13 +148,13 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className={`block text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-xs mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
               Email
             </label>
             <input
               type="email"
               name="email"
-              className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 
+              className={`w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 
                           ${theme === 'dark' ? 
                             'bg-gray-700 text-white border-gray-600' : 
                             'bg-white text-gray-900 border-gray-300'}`}
@@ -169,13 +165,13 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className={`block text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-xs mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
               Password
             </label>
             <input
               type="password"
               name="password"
-              className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 
+              className={`w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 
                           ${theme === 'dark' ? 
                             'bg-gray-700 text-white border-gray-600' : 
                             'bg-white text-gray-900 border-gray-300'}`}
@@ -186,13 +182,13 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className={`block text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-xs mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
               Confirm Password
             </label>
             <input
               type="password"
               name="confirmPassword"
-              className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 
+              className={`w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 
                           ${theme === 'dark' ? 
                             'bg-gray-700 text-white border-gray-600' : 
                             'bg-white text-gray-900 border-gray-300'}`}
@@ -204,7 +200,7 @@ export default function Signup() {
 
           <button
             type="submit"
-            className={`w-full font-semibold py-3 px-4 rounded-lg transition-colors
+            className={`w-full font-medium py-2 px-4 rounded-lg transition-colors
                       ${theme === 'dark' ? 
                         'bg-blue-600 hover:bg-blue-500 text-white' : 
                         'bg-blue-800 hover:bg-blue-700 text-white'}`}
@@ -212,22 +208,22 @@ export default function Signup() {
             Create account
           </button>
 
-          <div className={`flex items-center justify-center my-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          <div className={`flex items-center justify-center my-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
             <span className={`border-t w-full ${theme === 'dark' ? 'border-gray-600' : 'border-gray-400'}`}></span>
-            <span className="px-1 text-sm">or</span>
-            <span className="px-1 text-sm">continue</span>
-            <span className="px-1 text-sm">with</span>
+            <span className="px-1 text-xs">or</span>
+            <span className="px-1 text-xs">continue</span>
+            <span className="px-1 text-xs">with</span>
             <span className={`border-t w-full ${theme === 'dark' ? 'border-gray-600' : 'border-gray-400'}`}></span>
           </div>
 
           <div className="flex justify-center mt-4">
-            <div className={`rounded-full overflow-hidden w-8 h-8 shadow-md hover:shadow-lg transition-shadow flex items-center justify-center 
-                           ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
-              <div id="googleSignupDiv" className="w-10 h-10"></div>
-            </div>
-          </div>
+  <div className={`rounded-full overflow-hidden w-8 h-8 shadow-md hover:shadow-lg transition-shadow flex items-center justify-center 
+                  ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+    <div id="googleSignupDiv" className="w-10 h-10"></div>
+  </div>
+</div>
 
-          <p className={`text-center mt-6 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+          <p className={`text-center mt-4 text-xs ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
             Already have an account?{' '}
             <Link to="/login" className={`font-medium hover:underline ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
               Sign in
