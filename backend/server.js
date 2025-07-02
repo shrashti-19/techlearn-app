@@ -9,11 +9,32 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 dotenv.config();
 const app = express();
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  methods: ['GET','POST','OPTIONS'],
+const corsOptions = {
+  origin: function (origin, callback) {
+    // requests made by the same server or tools like curl have no Origin header
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    /* exact match for local dev */
+    if (origin === 'http://localhost:3000') {
+      return callback(null, true);
+    }
+
+    /* regex for all Vercel deployments */
+    if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+
+    /* anything else is rejected */
+    return callback(new Error('Not allowed by CORS'));
+  },
+
+  methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true
-})); 
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 mongoose.connect(process.env.MONGO_URI,{
     useNewUrlParser: true,
